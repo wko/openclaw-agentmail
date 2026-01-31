@@ -341,12 +341,19 @@ export async function monitorAgentMailProvider(
             logger.error(`agentmail ${info.kind} reply failed: ${String(err)}`),
         });
 
+      // By default, disable block streaming for email (send one final reply instead of multiple)
+      // Can be enabled via config: channels.agentmail.blockStreaming: true
+      const disableBlockStreaming = agentmailConfig?.blockStreaming !== true;
+
       const { queuedFinal, counts } =
         await core.channel.reply.dispatchReplyFromConfig({
           ctx: ctxPayload,
           cfg,
           dispatcher,
-          replyOptions,
+          replyOptions: {
+            ...replyOptions,
+            disableBlockStreaming,
+          },
         });
 
       markDispatchIdle();

@@ -15,4 +15,9 @@ export const AgentMailConfigSchema = z.object({
   emailAddress: z.string().optional(),
   /** Allowed sender emails/domains. Empty = allow all. */
   allowFrom: z.array(z.string()).optional(),
+  /** 
+   * Enable block streaming (send intermediate replies as separate emails).
+   * Default: false (only send final reply as one email).
+   */
+  blockStreaming: z.boolean().optional(),
 });

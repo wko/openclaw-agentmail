@@ -97,12 +97,13 @@ Alternatively, use environment variables:
 
 ## Configuration Options
 
-| Key | Type | Description |
-|-----|------|-------------|
-| `enabled` | boolean | Enable/disable the channel |
-| `token` | string | AgentMail API token (required) |
-| `emailAddress` | string | Inbox email address (required) |
-| `allowFrom` | string[] | Allowed sender emails/domains (empty = allow all) |
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `enabled` | boolean | `true` | Enable/disable the channel |
+| `token` | string | — | AgentMail API token (required) |
+| `emailAddress` | string | — | Inbox email address (required) |
+| `allowFrom` | string[] | `[]` | Allowed sender emails/domains (empty = allow all) |
+| `blockStreaming` | boolean | `false` | Send intermediate replies as separate emails. When `false` (default), only the final reply is sent as one email. |
 
 ## How It Works
 
