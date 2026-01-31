@@ -8,6 +8,8 @@ AgentMail email channel plugin for [OpenClaw](https://openclaw.ai) — secure, r
 - **Reply-only mode** — Cannot send emails to arbitrary addresses (security hardening)
 - **Sender filtering** — `allowFrom` whitelist for allowed senders
 - **Thread context** — Full email thread loaded for AI context
+- **Attachment support** — Downloads attachments and makes them available to the agent
+- **Single email replies** — Batch mode ensures one coherent response per email
 - **No agent tools** — Direct email API access disabled for safety
 
 ## Security
@@ -78,9 +80,29 @@ Alternatively, use environment variables:
 
 1. Plugin connects to AgentMail via WebSocket on gateway start
 2. Incoming emails are filtered by `allowFrom`
-3. Full thread context is fetched for the AI
-4. Agent's reply is sent via `replyAll` to maintain threading
-5. Only replies are allowed — no new emails to arbitrary addresses
+3. **Attachments are downloaded** and saved to temp directory
+4. Full thread context is fetched for the AI
+5. Agent receives email with `MediaPath`/`MediaPaths` pointing to attachments
+6. Agent's reply is sent via `replyAll` to maintain threading
+7. Only replies are allowed — no new emails to arbitrary addresses
+
+## Attachment Handling
+
+Email attachments are automatically downloaded and made available to the agent:
+
+- **Images** (JPEG, PNG, etc.) — Agent can view via vision capabilities
+- **Documents** (PDF, TXT, etc.) — Saved locally, path provided to agent
+- **All files** — Downloaded to temp directory, paths in `MediaPaths` context field
+
+The agent sees attachments the same way as other channels (Telegram, WhatsApp):
+
+```
+MediaPath: /tmp/openclaw-agentmail/<uuid>/invoice.pdf
+MediaPaths: ["/tmp/.../invoice.pdf", "/tmp/.../photo.jpg"]
+MediaTypes: ["application/pdf", "image/jpeg"]
+```
+
+**Note:** Attachments are saved to a temp directory and cleaned up by the OS. For persistent storage, the agent can copy files to a permanent location.
 
 ## Credits
 

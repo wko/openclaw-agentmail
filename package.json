@@ -1,6 +1,6 @@
 {
   "name": "openclaw-agentmail",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "AgentMail email channel plugin for OpenClaw - secure, reply-only email integration",
   "type": "module",
   "main": "index.ts",
