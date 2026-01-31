@@ -53,8 +53,11 @@ async function downloadAttachments(
       const filename = att.filename ?? `attachment-${att.attachmentId}`;
       const filePath = join(tempDir, filename);
       
-      // Save to temp file
-      await writeFile(filePath, Buffer.from(fileData as ArrayBuffer));
+      // Save to temp file - fileData can be ArrayBuffer, Buffer, or Uint8Array
+      const buffer = Buffer.isBuffer(fileData) 
+        ? fileData 
+        : Buffer.from(fileData as ArrayBufferLike);
+      await writeFile(filePath, buffer);
       
       results.push({
         path: filePath,

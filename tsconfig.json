@@ -9,9 +9,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "paths": {
-      "openclaw/plugin-sdk": ["../../src/plugin-sdk/index.ts"]
-    }
+    "typeRoots": ["./src", "./node_modules/@types"]
   },
   "include": ["./**/*"],
   "exclude": ["node_modules"]
