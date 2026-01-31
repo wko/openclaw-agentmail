@@ -24,20 +24,48 @@ This plugin has been hardened for security:
 
 ## Installation
 
+### Option 1: CLI Install (Recommended)
+
 ```bash
-openclaw plugins install openclaw-agentmail
+# Install from GitHub
+openclaw plugins install github:wko/openclaw-agentmail
+
+# Enable the plugin
+openclaw plugins enable agentmail
 ```
 
-Or add to your OpenClaw config:
+### Option 2: Development (Linked)
 
-```json5
+For local development with live changes:
+
+```bash
+git clone https://github.com/wko/openclaw-agentmail.git
+cd openclaw-agentmail
+openclaw plugins install -l .
+openclaw plugins enable agentmail
+```
+
+The `-l/--link` flag symlinks instead of copying — changes are reflected immediately.
+
+### Option 3: Docker / Containerized
+
+Add to your `package.json`:
+
+```json
 {
-  plugins: {
-    load: {
-      paths: ["node_modules/openclaw-agentmail"]
-    }
+  "dependencies": {
+    "openclaw-agentmail": "github:wko/openclaw-agentmail"
   }
 }
+```
+
+Then symlink in your `Dockerfile` after `pnpm install`:
+
+```dockerfile
+RUN ln -sf /app/node_modules/openclaw-agentmail /app/extensions/agentmail
+```
+
+OpenClaw discovers plugins via the `extensions/` folder.
 ```
 
 ## Configuration
