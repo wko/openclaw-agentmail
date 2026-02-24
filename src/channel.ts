@@ -111,7 +111,8 @@ export const agentmailPlugin: ChannelPlugin<ResolvedAgentMailAccount> = {
     validateInput: ({ input }) => {
       if (input.useEnv) return null;
       if (!input.token?.trim()) return "AgentMail requires --token";
-      if (!input.emailAddress?.trim())
+      const inputAny = input as { emailAddress?: string };
+      if (!inputAny.emailAddress?.trim())
         return "AgentMail requires --email-address";
       return null;
     },
@@ -120,7 +121,8 @@ export const agentmailPlugin: ChannelPlugin<ResolvedAgentMailAccount> = {
       const updates: Record<string, unknown> = { enabled: true };
       if (!input.useEnv) {
         if (input.token?.trim()) updates.token = input.token.trim();
-        if (input.emailAddress?.trim()) updates.emailAddress = input.emailAddress.trim();
+        const inputAny = input as { emailAddress?: string };
+        if (inputAny.emailAddress?.trim()) updates.emailAddress = inputAny.emailAddress.trim();
       }
       return { ...cfg, channels: { ...(cfg as CoreConfig).channels, agentmail: { ...existing, ...updates } } };
     },
@@ -147,7 +149,6 @@ export const agentmailPlugin: ChannelPlugin<ResolvedAgentMailAccount> = {
         })),
     buildChannelSummary: ({ snapshot: s }) => ({
       configured: s.configured ?? false,
-      emailAddress: s.emailAddress ?? null,
       running: s.running ?? false,
       lastStartAt: s.lastStartAt ?? null,
       lastStopAt: s.lastStopAt ?? null,
@@ -186,7 +187,7 @@ export const agentmailPlugin: ChannelPlugin<ResolvedAgentMailAccount> = {
   gateway: {
     startAccount: async (ctx) => {
       const { accountId, inboxId } = ctx.account;
-      ctx.setStatus({ accountId, emailAddress: inboxId });
+      ctx.setStatus({ accountId, configured: true });
       ctx.log?.info(
         `[${accountId}] starting AgentMail provider (email: ${
           inboxId ?? "unknown"

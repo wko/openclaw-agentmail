@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
+import { fetch } from "undici";
 
 import {
   getAgentMailClient,
@@ -42,21 +43,18 @@ async function downloadAttachments(
     try {
       logVerbose(`agentmail: downloading attachment ${att.filename ?? att.attachmentId}`);
       
-      // Download the attachment content
-      const fileData = await client.inboxes.messages.getAttachment(
+      const attachmentResponse = await client.inboxes.messages.getAttachment(
         inboxId,
         messageId,
         att.attachmentId
       );
       
-      // Determine filename
       const filename = att.filename ?? `attachment-${att.attachmentId}`;
       const filePath = join(tempDir, filename);
       
-      // Save to temp file - fileData can be ArrayBuffer, Buffer, or Uint8Array
-      const buffer = Buffer.isBuffer(fileData) 
-        ? fileData 
-        : Buffer.from(fileData as ArrayBufferLike);
+      const response = await fetch(attachmentResponse.downloadUrl);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
       await writeFile(filePath, buffer);
       
       results.push({
@@ -164,7 +162,7 @@ export async function monitorAgentMailProvider(
   };
 
   try {
-    socket = await client.websockets.connect({ authToken: apiKey });
+    socket = await client.websockets.connect({ apiKey });
 
     socket.on("open", () => {
       connectionCount++;
@@ -237,7 +235,7 @@ export async function monitorAgentMailProvider(
       const route = core.channel.routing.resolveAgentRoute({
         cfg,
         channel: "agentmail",
-        peer: { kind: "dm", id: senderEmail },
+        peer: { kind: "direct" as const, id: senderEmail },
       });
 
       const senderName = parseNameFromAddress(message.from);

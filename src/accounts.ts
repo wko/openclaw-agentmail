@@ -1,4 +1,4 @@
-import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "openclaw/plugin-sdk";
+import { normalizeAccountId } from "openclaw/plugin-sdk";
 
 import type {
   AgentMailConfig,
@@ -33,10 +33,11 @@ export function resolveCredentials(
 export function resolveAgentMailAccount(params: {
   cfg: CoreConfig;
   accountId?: string | null;
+  env?: Record<string, string | undefined>;
 }): ResolvedAgentMailAccount {
   const accountId = normalizeAccountId(params.accountId);
   const base = (params.cfg.channels?.agentmail ?? {}) as AgentMailConfig;
-  const { apiKey, inboxId } = resolveCredentials(params.cfg);
+  const { apiKey, inboxId } = resolveCredentials(params.cfg, params.env);
 
   return {
     accountId,
