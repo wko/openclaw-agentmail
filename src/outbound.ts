@@ -2,7 +2,6 @@ import type { AgentMailClient } from "agentmail";
 import type { ChannelOutboundAdapter } from "openclaw/plugin-sdk";
 
 import { getClientAndInbox } from "./client.js";
-import { getAgentMailRuntime } from "./runtime.js";
 
 /** Sends a reply-all to an email message via AgentMail. */
 export async function sendAgentMailReply(params: {
@@ -42,7 +41,7 @@ async function sendMessage(params: {
 /** Outbound adapter for the AgentMail channel. */
 export const agentmailOutbound: ChannelOutboundAdapter = {
   // Use batch mode: collect all content, send as single email at the end
-  deliveryMode: "batch",
+  deliveryMode: "direct",
   
   // No chunking for email - send complete response as one message
   // Email has no practical length limit like chat messages do
